@@ -187,3 +187,10 @@ class HistoryEntry(BaseModel):
     summary: str
     data: dict
     created_at: str
+
+
+class HistoryCreateRequest(BaseModel):
+    feature: str
+    title: str
+    summary: str
+    data: dict

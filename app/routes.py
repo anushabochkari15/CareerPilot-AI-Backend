@@ -26,6 +26,7 @@ from app.models import (
     ProjectRequest, ProjectResponse,
     PlannerRequest, PlannerResponse,
     ChatRequest,
+    HistoryCreateRequest, HistoryEntry,
 )
 from app.database import get_db
 from app.services import (
@@ -212,6 +213,26 @@ async def history_endpoint(
         }
         for r in records
     ]
+
+
+@router.post("/history", response_model=HistoryEntry)
+async def create_history_endpoint(request: HistoryCreateRequest, db: AsyncSession = Depends(get_db)):
+    """Save a new history entry to the database."""
+    record = await save_history(
+        db,
+        request.feature,
+        request.title,
+        request.summary,
+        request.data,
+    )
+    return {
+        "id": record.id,
+        "feature": record.feature,
+        "title": record.title,
+        "summary": record.summary,
+        "data": record.data,
+        "created_at": record.created_at.isoformat() if record.created_at else None,
+    }
 
 
 @router.delete("/history/{record_id}")
